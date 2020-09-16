@@ -40,6 +40,8 @@ public class SwiftMultiImagePickerPlugin: NSObject, FlutterPlugin {
 
     let genericError = "500"
 
+    var vc = BSImagePickerViewController()
+
     init(messenger: FlutterBinaryMessenger) {
         self.messenger = messenger;
         super.init();
@@ -55,23 +57,28 @@ public class SwiftMultiImagePickerPlugin: NSObject, FlutterPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch (call.method) {
         case "pickImages":
+            let arguments = call.arguments as! Dictionary<String, AnyObject>
+            let maxImages = arguments["maxImages"] as! Int
+            let enableCamera = arguments["enableCamera"] as! Bool
+            let options = arguments["iosOptions"] as! Dictionary<String, String>
+            let selectedAssets = arguments["selectedAssets"] as! Array<String>
+            let clearSelection = arguments["clearSelection"] as! Bool
+            
             let status: PHAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
             
             if (status == PHAuthorizationStatus.denied) {
                 return result(FlutterError(code: "PERMISSION_PERMANENTLY_DENIED", message: "The user has denied the gallery access.", details: nil))
             }
             
-            let vc = BSImagePickerViewController()
+            if(clearSelection) {
+                // Reset image picker
+                vc = BSImagePickerViewController()
+            }
             
             if #available(iOS 13.0, *) {
                 // Disables iOS 13 swipe to dismiss - to force user to press cancel or done.
                 vc.isModalInPresentation = true
             }
-            let arguments = call.arguments as! Dictionary<String, AnyObject>
-            let maxImages = arguments["maxImages"] as! Int
-            let enableCamera = arguments["enableCamera"] as! Bool
-            let options = arguments["iosOptions"] as! Dictionary<String, String>
-            let selectedAssets = arguments["selectedAssets"] as! Array<String>
             var totalImagesSelected = 0
             
             vc.maxNumberOfSelections = maxImages

@@ -68,6 +68,7 @@ public class MultiImagePickerPlugin implements
     private static final String SELECTED_ASSETS = "selectedAssets";
     private static final String ENABLE_CAMERA = "enableCamera";
     private static final String ANDROID_OPTIONS = "androidOptions";
+    private static final String CLEAR_SELECTED_ASSETS = "clearSelection";
     private static final int REQUEST_CODE_CHOOSE = 1001;
     private MethodChannel channel;
     private Activity activity;
@@ -90,7 +91,7 @@ public class MultiImagePickerPlugin implements
         context = applicationContext;
         messenger = binaryMessenger;
         if (activity != null) {
-          this.activity = activity;
+            this.activity = activity;
         }
         channel = new MethodChannel(binaryMessenger, CHANNEL_NAME);
         channel.setMethodCallHandler(this);
