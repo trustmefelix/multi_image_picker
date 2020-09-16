@@ -8,7 +8,7 @@ import 'package:multi_image_picker/src/exceptions.dart';
 
 class MultiImagePicker {
   static const MethodChannel _channel =
-      const MethodChannel('multi_image_picker');
+  const MethodChannel('multi_image_picker');
 
   /// Invokes the multi image picker selector.
   ///
@@ -33,9 +33,14 @@ class MultiImagePicker {
   /// pick thousands of images at a time, with no performance
   /// penalty. How to request the original image or a thumb
   /// you can refer to the docs for the Asset class.
+  ///
+  /// The usage of [clearSelection] is to clear assets selection when
+  /// open the multi image picker
+  /// which is applied on iOS only.
   static Future<List<Asset>> pickImages({
     @required int maxImages,
     bool enableCamera = false,
+    bool clearSelection = false,
     List<Asset> selectedAssets = const [],
     CupertinoOptions cupertinoOptions = const CupertinoOptions(),
     MaterialOptions materialOptions = const MaterialOptions(),
@@ -51,13 +56,14 @@ class MultiImagePicker {
         'pickImages',
         <String, dynamic>{
           'maxImages': maxImages,
+          'clearSelection': clearSelection,
           'enableCamera': enableCamera,
           'iosOptions': cupertinoOptions.toJson(),
           'androidOptions': materialOptions.toJson(),
           'selectedAssets': selectedAssets
               .map(
                 (Asset asset) => asset.identifier,
-              )
+          )
               .toList(),
         },
       );
@@ -143,7 +149,7 @@ class MultiImagePicker {
   static Future<bool> requestOriginal(String identifier, quality) async {
     try {
       bool ret =
-          await _channel.invokeMethod("requestOriginal", <String, dynamic>{
+      await _channel.invokeMethod("requestOriginal", <String, dynamic>{
         "identifier": identifier,
         "quality": quality,
       });
